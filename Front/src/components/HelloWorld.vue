@@ -1,43 +1,18 @@
 <script setup>
-import { ref } from 'vue'
 
-defineProps({
-  msg: String,
-})
-
-const count = ref(0)
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
-
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
+  <div class="w-fit border-4 rounded-lg p-2 bg-slate-50 border-slate-600 text-slate-600 flex flex-col items-center">
+    <p>Hello world</p>
+    <p>Hello world</p>
+    <select class="accent-red-500 px-1 bg-slate-50">
+      <option>Yes</option>
+      <option>No</option>
+      <option>Maybe</option>
+    </select>
+    <input type="checkbox" class="accent-pink-500" checked> Customized
   </div>
-
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
 </template>
 
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
+<style scoped></style>
