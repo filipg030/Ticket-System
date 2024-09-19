@@ -1,11 +1,10 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import { RouterLink, RouterView } from 'vue-router'
 </script>
 
+
 <template>
-  <div class="w-full h-full flex items-center justify-center">
-    <HelloWorld />
-  </div>
+  <RouterView />
 </template>
 
 <style scoped></style>
