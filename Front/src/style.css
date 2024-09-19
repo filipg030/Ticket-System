@@ -6,11 +6,31 @@
 
 @layer components {
     .roseTextInput {
-        @apply py-2 px-5 bg-rose-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75;
+        @apply p-2 bg-rose-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75
+        placeholder:text-slate-900/75 placeholder:font-light;
     }
     .seagullTextInput {
-        @apply py-2 px-5 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
+        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75
+        placeholder:text-slate-900/75 placeholder:font-light;
+    }
+    .seagullTextArea {
+        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75
+        placeholder:text-slate-900/75 placeholder:font-light;
+    }
+    .seagullBtn {
+        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
         hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75;
     }
+    .caribbeanBtn {
+        @apply p-2 bg-caribbean-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-caribbean-700 focus:outline-none focus:ring focus:ring-caribbean-400 focus:ring-opacity-75;
+    }
+    .roseBtn {
+        @apply p-2 bg-rose-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75;
+        }
+    
   }
