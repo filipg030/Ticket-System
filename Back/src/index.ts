@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import BodyParser from "body-parser"
 import DataStore from "nedb"
+import path from 'path'
 const app: Express = express();
 const port: number = 3000;
 const db: DataStore = new DataStore({filename: "./db/testdb.db", autoload: true})
@@ -9,7 +10,7 @@ const body_parser = BodyParser
 app.use(body_parser.json())
 
 app.get("/", async (req: Request, res: Response) => {
-    res.sendFile("./test.html")
+    res.sendFile("test.html" ,{root: path.join(__dirname,"static")})
 });
 
 app.post("/api/add", async (req: Request, res: Response) => {
