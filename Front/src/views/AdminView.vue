@@ -1,5 +1,5 @@
 <script>
-import SideBar from '../components/SideBar.vue'
+import Navbar from "../components/Navbar.vue"
 import Ticket from '../components/TicketComponent.vue';
 
 export default {
@@ -14,7 +14,7 @@ export default {
     }
   },
   components: {
-    SideBar,
+    Navbar,
     Ticket
   },
   methods: {
@@ -30,7 +30,9 @@ export default {
 </script>
 
 <template>
+  
   <div class="all">
+    <Navbar></Navbar>
     <div class="main" style="min-width: 840px;">
       <div class="descriptionBar">
           <div class="w-1/10" id="ticketID">
@@ -70,7 +72,7 @@ label {
 
 .all {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: 100%;
   height: 100%;
 }
