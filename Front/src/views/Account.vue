@@ -1,5 +1,5 @@
 <script>
-import SideBar from '../components/SideBar.vue'
+import SideBar from '../components/Navbar.vue'
 
 export default {
 
@@ -50,7 +50,7 @@ export default {
         </div>
 
         <div class="w-1/2 flex flex-col">
-          <label for="salaInput">Nowe asło</label>
+          <label for="salaInput">Nowe hasło</label>
           <input class="seagullTextInput w-full" type="password" id="noweHasloInput">
         </div>
 
