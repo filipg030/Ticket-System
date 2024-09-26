@@ -9,6 +9,7 @@ const port: number = 3001;
 const db: DataStore = new DataStore({ filename: "./db/tickets.db", autoload: true })
 const body_parser = BodyParser
 
+
 app.use(body_parser.json())
 app.use(express.static("static"))
 
