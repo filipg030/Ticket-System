@@ -1,16 +1,21 @@
 import express, { Express, Request, Response } from "express";
 import BodyParser from "body-parser"
 import DataStore from "nedb"
+import path from 'path'
 const app: Express = express();
-const port: number = 3000;
+const port: number = 3001;
 const db: DataStore = new DataStore({filename: "./db/testdb.db", autoload: true})
 const body_parser = BodyParser
 
 app.use(body_parser.json())
+app.use(express.static(path.join("static")))
+app.use(express.static(path.join("../","node_modules","jwt-decode","build","cjs")))
 
 app.get("/", async (req: Request, res: Response) => {
-    res.sendFile("./test.html")
+    res.sendFile("test.html", {root: path.join(__dirname,"static")})
 });
+
+
 
 app.post("/api/add", async (req: Request, res: Response) => {
     console.log(req.body.id)
@@ -50,6 +55,10 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
         }
     })
 });
+
+app.get("/api/microsoft_auth", async (req:Request, res:Response) => {
+    res.send("yay")
+})
 
 app.listen(port, () => {
     console.log("port: " + port)
