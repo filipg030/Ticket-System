@@ -6,6 +6,9 @@ export default {
   ],
   theme: {
     extend: {
+      width:{
+        '1/10':'10%'
+      },
       colors: {
         'rose': {
           '50': '#fef1f8',

@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import UserView from '../views/UserView.vue'
 import LoginView from '../views/LoginView.vue'
-import Account from '../views/Account.vue'
+import AdminView from '../views/AdminView.vue'
 
 
 const router = createRouter({
@@ -19,9 +19,9 @@ const router = createRouter({
         component: UserView
       },
       {
-        path: '/konto/:id',
-        name: "account",
-        component: Account
+        path: '/admin',
+        name: 'admin',
+        component: AdminView
       }
     ]
 
