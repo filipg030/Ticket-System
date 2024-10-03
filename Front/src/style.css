@@ -10,9 +10,19 @@
         hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
+    .slateTextInput {
+        @apply p-2 bg-slate-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-slate-700 focus:outline-none focus:ring focus:bg-slate-400 focus:ring-opacity-75
+        placeholder:text-slate-900/75 placeholder:font-light;
+    }
     .seagullTextInput {
         @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
         hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75
+        placeholder:text-slate-900/75 placeholder:font-light;
+    }
+    .slateTextArea {
+        @apply p-2 bg-slate-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-slate-700 focus:outline-none focus:ring focus:bg-slate-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
     .seagullTextArea {
