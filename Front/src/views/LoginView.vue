@@ -91,6 +91,9 @@ export default {
         await myMsal.initialize()
         let msal_token = await myMsal.loginPopup(this.loginRequest)
 
+        console.log(msal_token);
+        
+
         console.log(msal_token.account.username);
         let username = msal_token.account.username
 
