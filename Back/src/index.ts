@@ -9,6 +9,7 @@ const app: Express = express();
 const port: number = 3001;
 const db: DataStore = new DataStore({ filename: "./db/tickets.db", autoload: true })
 const body_parser = BodyParser
+const admin_users = ["dsidorowicz65@tlkrakowpl.onmicrosoft.com", "dmincberger42@tlkrakowpl.onmicrosoft.com", "adusik61@tlkrakowpl.onmicrosoft.com", "mmikolajczyk69@tlkrakowpl.onmicrosoft.com", "fgrudziecki25@tlkrakowpl.onmicrosoft.com"]
 
 
 app.use(body_parser.json())
@@ -94,9 +95,23 @@ app.get("/api/microsoft_auth", async (req: Request, res: Response) => {
 
 app.post("/user_check", async(req:Request, res:Response) => {
     console.log(req.body)
-    res.setHeader('Content-Type', 'application/json')
-    res.json({dane:"test"})
-    res.end()
+    try {
+        const email:string = req.body.email
+        const load_admin:boolean = req.body.load_admin
+        console.log(load_admin);
+        
+        if (admin_users.includes(email) && load_admin){
+            res.json({role:"admin"})
+            res.end()
+        } else {
+            res.json({role:"user"})
+            res.end()
+        }
+    } catch(e) {
+            console.log("ERROR CHECK");
+            res.sendStatus(500)
+            res.end()
+    }
 })
 
 app.get("/make_table", async (req: Request, res: Response) => {
