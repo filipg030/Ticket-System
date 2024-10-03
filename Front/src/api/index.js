@@ -67,5 +67,5 @@ const patch = async (url, object) => {
 
 
 export {
-
+    post
 }
