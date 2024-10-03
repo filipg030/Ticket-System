@@ -132,7 +132,7 @@ export default {
     </div>
     <div class="z-10 w-64 h-fit border rounded-lg p-2 bg-slate-100 shadow-lg shadow-black/50 text-slate-100">
         <div v-if="adminUser == 0" class="flex flex-row gap-2 justify-stretch">
-        <button id="loginBt"class="rounded-md w-full h-16 p-2 bg-seagull-500" @click="loginClicked"><i class="text-xl uil uil-microsoft"></i>  Zaloguj z Microsoft</button>
+        <button id="loginBt"class="rounded-md w-full h-16 p-2 bg-slate-500" @click="loginClicked"><i class="text-xl uil uil-microsoft"></i>  Zaloguj z Microsoft</button>
         <!-- <button class="rounded-md w-full h-16 p-2 bg-rose-500" @click="adminUser=2">Admin</button> -->
         </div>
     <div class="flex flex-col gap-2 text-center" v-if="adminUser == 1">
@@ -157,7 +157,7 @@ export default {
 
 .gradient{
     background: rgb(2,0,36);
-background: linear-gradient(43deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 35%, rgba(0,212,255,1) 100%);
+background: linear-gradient(43deg, rgba(65,83,117,255) 0%, rgba(56,73,102,255) 35%, rgba(50,65,92,255) 100%);
 }
 
 </style>
