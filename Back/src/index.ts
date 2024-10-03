@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from "express";
 import BodyParser from "body-parser"
 import DataStore from "nedb"
 import path from 'path'
+import cors from 'cors'
 import { spawn, exec } from 'child_process'
 
 const app: Express = express();
@@ -12,6 +13,7 @@ const body_parser = BodyParser
 
 app.use(body_parser.json())
 app.use(express.static("static"))
+app.use(cors());
 
 app.get("/", async (req: Request, res: Response) => {
     res.sendFile("test.html", { root: path.join(__dirname, "static") })
@@ -88,6 +90,13 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
 
 app.get("/api/microsoft_auth", async (req: Request, res: Response) => {
     res.send("zalogowano!")
+})
+
+app.post("/user_check", async(req:Request, res:Response) => {
+    console.log(req.body)
+    res.setHeader('Content-Type', 'application/json')
+    res.json({dane:"test"})
+    res.end()
 })
 
 app.get("/make_table", async (req: Request, res: Response) => {

@@ -93,6 +93,12 @@ export default {
 
         console.log(msal_token.account.username);
         let username = msal_token.account.username
+
+        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username})
+
+        console.log(usernameResponse);
+        
+
       } catch (error) {
         console.log(error);
         
@@ -106,7 +112,6 @@ export default {
   }
 }
 
-// let usernameResponse = await post("http://localhost:5173" ,{email: username})
 
 // console.log("---------- ACCESS TOKEN ---------------");
 
