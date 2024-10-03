@@ -86,18 +86,14 @@ export default {
     async loginClicked() {
       this.adminUser = 1
       try {
-        console.log("Login button clicked");
         const myMsal = new msal.PublicClientApplication(this.config);
         await myMsal.initialize()
         let msal_token = await myMsal.loginPopup(this.loginRequest)
 
-        console.log(msal_token);
-        
-
-        console.log(msal_token.account.username);
         let username = msal_token.account.username
+        let load_admin = false
 
-        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username})
+        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin})
 
         console.log(usernameResponse);
         
