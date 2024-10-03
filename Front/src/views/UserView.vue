@@ -1,6 +1,5 @@
 <script>
-import SideBar from '../components/SideBar.vue'
-
+import Navbar from '../components/Navbar.vue';
 export default {
 
   data() {
@@ -13,7 +12,7 @@ export default {
     }
   },
   components: {
-    SideBar
+    Navbar
   },
   methods: {
     sendTicket(){
@@ -28,8 +27,11 @@ export default {
 </script>
 
 <template>
-  <SideBar style="float: left;" />
-  <div class="w-auto h-screen flex  justify-center">
+  <div style="width: 100%;">
+    <Navbar ></Navbar>
+
+  </div>
+  <div class="w-full h-full flex justify-center">
     <div class="m-4 w-2/3 flex flex-col gap-1">
       <div class="flex flex-row justify-between gap-2">
         <div class="w-1/2 flex flex-col">
