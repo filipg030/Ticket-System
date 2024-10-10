@@ -45,6 +45,9 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
 app.get("/api/get", async (req: Request, res: Response) => {
     try {
+        "jwt-decode": "^4.0.0",
+        "nedb": "^1.8.0",
+        "typescript": "^5.6.2"
         db.find({}, (err: Error, docs: [any]) => {
             console.log(docs)
             res.send(docs)
