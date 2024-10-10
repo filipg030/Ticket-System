@@ -5,7 +5,7 @@ export default {
 
   data() {
     return {
-      severity: 0,
+      powaga: 0,
       imie: null,
       nazwisko:null,
       sala:null,

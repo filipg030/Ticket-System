@@ -1,0 +1,25 @@
+@font-face {
+    font-family: 'Exo_2';
+    src: url(./assets/fonts/Exo2-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: 'Exo_2';
+    font-style: italic;
+    src: url(./assets/fonts/Exo2-Italic-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    src: url(./assets/fonts/Montserrat-VariableFont_wght.ttf);
+}
+
+@font-face {
+    font-family: 'Montserrat';
+    font-style: italic;
+    src: url(./assets/fonts/Montserrat-Italic-VariableFont_wght.ttf);
+}
+
+*{
+    font-family: 'Exo_2';
+}
