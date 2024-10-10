@@ -117,6 +117,9 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
 app.get("/api/get", async (req: Request, res: Response) => {
     try {
+        "jwt-decode": "^4.0.0",
+        "nedb": "^1.8.0",
+        "typescript": "^5.6.2"
         db.find({}, (err: Error, docs: [any]) => {
             console.log(docs)
             res.send(docs)
@@ -172,6 +175,27 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
     }
 });
 
+
+app.post("/user_check", async(req:Request, res:Response) => {
+    console.log(req.body)
+    try {
+        const email:string = req.body.email
+        const load_admin:boolean = req.body.load_admin
+        console.log(load_admin);
+        
+        if (admin_users.includes(email) && load_admin){
+            res.json({role:"admin"})
+            res.end()
+        } else {
+            res.json({role:"user"})
+            res.end()
+        }
+    } catch(e) {
+            console.log("ERROR CHECK");
+            res.sendStatus(500)
+            res.end()
+    }
+})
 
 app.post("/user_check", async(req:Request, res:Response) => {
     console.log(req.body)

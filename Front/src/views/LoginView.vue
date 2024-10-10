@@ -99,6 +99,10 @@ export default {
         
         console.log(msal_token)
 
+        console.log(usernameResponse);
+        
+
+
       } catch (error) {
         console.log(error);
         

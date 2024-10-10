@@ -1,67 +1,80 @@
 <script>
 import Navbar from "../components/Navbar.vue"
-import Ticket from '../components/TicketComponent.vue';
+import TicketComponent from '../components/TicketComponent.vue';
+import Ticket from "../js/Ticket";
+import sampleTickets from "../assets/sampleTickets.json"
 
 export default {
 
   data() {
     return {
-      severity: 0,
-      imie: null,
-      nazwisko:null,
-      sala:null,
-      problem:null,
+      tickets: []
     }
   },
   components: {
     Navbar,
-    Ticket
+    TicketComponent
   },
   methods: {
-    sendTicket(){
-      //check if all values are set
-    }
+
   },
 
   mounted() {
+    for (let i = 0; i < sampleTickets.length; i++) {
+      const ticketData = sampleTickets[i];
 
+      let ticket = new Ticket(
+        ticketData.imie,
+        ticketData.nazwisko,
+        ticketData.pietro,
+        ticketData.sala,
+        ticketData.problem,
+        ticketData.powaga
+      );
+
+      ticket.id = i;
+
+      console.log(i, ticket)
+
+      this.tickets.push(ticket);
+    }
   }
 }
 </script>
 
 <template>
-  
+
   <div class="all">
     <Navbar></Navbar>
     <div class="main" style="min-width: 840px;">
       <div class="descriptionBar">
-          <div class="w-1/10" id="ticketID">
-            <h2>ID</h2>
-          </div>
-          <div class="w-1/10" id="ticketRoom">
-            <h2>Sala</h2>
-          </div>
-          <div class="w-1/10" id="ticketLastName">
-            <h2>Nazwisko</h2>
-          </div>
-          <div class="w-1/10" id="ticketFirstName">
-            <h2>Imie</h2>
-          </div>
-          <div class="w-2/5" id="ticketProblemDesc"> 
-            <h2>Opis problemu</h2>
-          </div>
-          <div class="w-1/10" id="ticketSeverity">
-            <h2>Stopień problemu</h2>
-          </div>
-          <div class="w-1/10" id="ticketResolution">
-            <h2>Status</h2>
-          </div>
+        <div class="w-1/10" id="ticketID">
+          <h2>ID</h2>
+        </div>
+        <div class="w-1/10" id="ticketRoom">
+          <h2>Sala</h2>
+        </div>
+        <div class="w-1/10" id="ticketLastName">
+          <h2>Nazwisko</h2>
+        </div>
+        <div class="w-1/10" id="ticketFirstName">
+          <h2>Imie</h2>
+        </div>
+        <div class="w-2/5" id="ticketProblemDesc">
+          <h2>Opis problemu</h2>
+        </div>
+        <div class="w-1/10" id="ticketSeverity">
+          <h2>Stopień problemu</h2>
+        </div>
+        <div class="w-1/10" id="ticketResolution">
+          <h2>Status</h2>
+        </div>
       </div>
 
-      <Ticket />
+      <TicketComponent v-for="ticket in tickets" v-bind="ticket" />
     </div>
   </div>
-  
+
 
 </template>
 
@@ -102,5 +115,4 @@ label {
 h2 {
   @apply font-bold;
 }
-
 </style>
