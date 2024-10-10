@@ -95,8 +95,13 @@ export default {
 
         let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin})
 
+        // console.log(usernameResponse);
+        
+        console.log(msal_token)
+
         console.log(usernameResponse);
         
+
 
       } catch (error) {
         console.log(error);
