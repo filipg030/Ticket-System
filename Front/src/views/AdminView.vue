@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar.vue"
 import TicketComponent from '../components/TicketComponent.vue';
 import Ticket from "../js/Ticket";
 import sampleTickets from "../assets/sampleTickets.json"
+import { get } from "../api";
 
 export default {
 
@@ -19,20 +20,25 @@ export default {
 
   },
 
-  mounted() {
-    for (let i = 0; i < sampleTickets.length; i++) {
-      const ticketData = sampleTickets[i];
+  async mounted() {
+    let ticketsFromDB = await get("http://localhost:3001/api/get")
+    // console.log(ticketsFromDB);
+    
+
+    for (let i = 0; i < ticketsFromDB.length; i++) {
+      const ticketData = ticketsFromDB[i];
 
       let ticket = new Ticket(
         ticketData.imie,
         ticketData.nazwisko,
-        ticketData.pietro,
-        ticketData.sala,
-        ticketData.problem,
-        ticketData.powaga
+        ticketData.floor,
+        ticketData.room,
+        ticketData.desc,
+        ticketData.level
       );
 
-      ticket.id = i;
+      ticket.done = ticketData.status
+      ticket.id = ticketData.id;
 
       console.log(i, ticket)
 
