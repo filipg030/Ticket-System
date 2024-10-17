@@ -4,6 +4,8 @@ import Footer from '../components/Footer.vue';
 
 import Ticket from '../js/Ticket';
 
+import { post } from '../api';
+
 export default {
 
   data() {
@@ -33,7 +35,7 @@ export default {
     Footer
   },
   methods: {
-    sendTicket() {
+    async sendTicket() {
       //check if all values are set
 
 
@@ -51,7 +53,9 @@ export default {
       else{
         // wyślij
 
-        console.log("wyslane");
+        let sendTicket = await post("http://localhost:3001/api/add", {room: this.ticket.sala, desc: this.ticket.problem, floor: this.ticket.pietro, level: this.ticket.powaga, status: "pending", name: this.ticket.imie, surname: this.ticket.nazwisko })
+
+        console.log(sendTicket);
 
       }
 
