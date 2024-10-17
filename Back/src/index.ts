@@ -23,7 +23,11 @@ app.get("/", async (req: Request, res: Response) => {
 let idCounter: number
 db.find({}, (err: Error, docs: [any]) => {
     docs = docs.sort((a,b) => b.id - a.id);
-    idCounter = docs[0].id
+    if(docs[0]) {
+        idCounter = docs[0].id
+    } else {
+        idCounter = 0
+    }
 })
 
 
