@@ -20,6 +20,11 @@ app.get("/", async (req: Request, res: Response) => {
     res.sendFile("test.html", { root: path.join(__dirname, "static") })
 });
 
+let idCounter: number
+db.find({}, (err: Error, docs: [any]) => {
+    docs = docs.sort((a,b) => b.id - a.id);
+    idCounter = docs[0].id
+})
 
 
 // dane ticketa:
@@ -28,9 +33,11 @@ app.get("/", async (req: Request, res: Response) => {
 app.post("/api/add", async (req: Request, res: Response) => {
     try {
         let ticket = {
+            id: ++idCounter,
             room: req.body.room,
             desc: req.body.desc,
             level: req.body.level,
+            floor: req.body.floor,
             status: req.body.status,
             imie: req.body.name,
             nazwisko: req.body.surname
