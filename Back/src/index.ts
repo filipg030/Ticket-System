@@ -4,7 +4,7 @@ import DataStore from "nedb"
 import path from 'path'
 import cors from 'cors'
 import { spawn, exec } from 'child_process'
-import { verify,decode } from 'jsonwebtoken'
+import { verify, decode } from 'jsonwebtoken'
 
 const app: Express = express();
 const port: number = 3001;
@@ -24,7 +24,7 @@ function verifyTokenDate(exp: number): boolean {
 }
 
 function checkToken(req: Request): string {
-    if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         let token: string = req.headers.authorization.split("Bearer")[1].trim()
         return token
     }
@@ -32,7 +32,7 @@ function checkToken(req: Request): string {
 }
 
 function verifyTokenUser(email: string): string {
-    if(admin_users.includes(email)) {
+    if (admin_users.includes(email)) {
         return "admin"
     }
     else {
@@ -42,11 +42,11 @@ function verifyTokenUser(email: string): string {
 
 function tokenCheckPoint(req: Request): any {
     let token: string = checkToken(req)
-    if (token == "no token"){
+    if (token == "no token") {
         return false
     }
     let decoded_token = decode(token) // zdekodowany accesstoken z obiektu msal_token 
-    if(!verifyTokenDate(decoded_token.exp)){
+    if (!verifyTokenDate(decoded_token.exp)) {
         return false
     }
     return decoded_token
@@ -61,15 +61,15 @@ function tokenCheckPoint(req: Request): any {
 //         res.send("token verification failed")
 //         return
 //     }    
-    // let userType: string = verifyTokenUser(decoded_token.upn)
-    // if (userType == "user"){
-    //     res.send("user signed in")
-    //     return
-    // }
-    // if (userType == "admin"){
-    //     res.send("admin signed in")
-    //     return
-    // }
+// let userType: string = verifyTokenUser(decoded_token.upn)
+// if (userType == "user"){
+//     res.send("user signed in")
+//     return
+// }
+// if (userType == "admin"){
+//     res.send("admin signed in")
+//     return
+// }
 // });
 
 
@@ -93,10 +93,10 @@ osobne rzeczy dla admina i usera
 
 app.post("/api/add", async (req: Request, res: Response) => {
     let verification: boolean | object = tokenCheckPoint(req)
-    if (!verification){
+    if (!verification) {
         res.send("token verification failed")
         return
-    }  
+    }
 
     try {
         let ticket = {
@@ -117,9 +117,6 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
 app.get("/api/get", async (req: Request, res: Response) => {
     try {
-        "jwt-decode": "^4.0.0",
-        "nedb": "^1.8.0",
-        "typescript": "^5.6.2"
         db.find({}, (err: Error, docs: [any]) => {
             console.log(docs)
             res.send(docs)
@@ -149,12 +146,12 @@ app.get("/api/get/:id", async (req: Request, res: Response) => {
 
 app.get("/api/remove/:id", async (req: Request, res: Response) => {
     let verification: any = tokenCheckPoint(req)
-    if (!verification){
+    if (!verification) {
         res.send("token verification failed")
         return
     }
-        let userType: string = verifyTokenUser(verification.upn)
-    if (userType == "user"){
+    let userType: string = verifyTokenUser(verification.upn)
+    if (userType == "user") {
         res.send("not permitted")
         return
     }
@@ -176,45 +173,45 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
 });
 
 
-app.post("/user_check", async(req:Request, res:Response) => {
+app.post("/user_check", async (req: Request, res: Response) => {
     console.log(req.body)
     try {
-        const email:string = req.body.email
-        const load_admin:boolean = req.body.load_admin
+        const email: string = req.body.email
+        const load_admin: boolean = req.body.load_admin
         console.log(load_admin);
-        
-        if (admin_users.includes(email) && load_admin){
-            res.json({role:"admin"})
+
+        if (admin_users.includes(email) && load_admin) {
+            res.json({ role: "admin" })
             res.end()
         } else {
-            res.json({role:"user"})
+            res.json({ role: "user" })
             res.end()
         }
-    } catch(e) {
-            console.log("ERROR CHECK");
-            res.sendStatus(500)
-            res.end()
+    } catch (e) {
+        console.log("ERROR CHECK");
+        res.sendStatus(500)
+        res.end()
     }
 })
 
-app.post("/user_check", async(req:Request, res:Response) => {
+app.post("/user_check", async (req: Request, res: Response) => {
     console.log(req.body)
     try {
-        const email:string = req.body.email
-        const load_admin:boolean = req.body.load_admin
+        const email: string = req.body.email
+        const load_admin: boolean = req.body.load_admin
         console.log(load_admin);
-        
-        if (admin_users.includes(email) && load_admin){
-            res.json({role:"admin"})
+
+        if (admin_users.includes(email) && load_admin) {
+            res.json({ role: "admin" })
             res.end()
         } else {
-            res.json({role:"user"})
+            res.json({ role: "user" })
             res.end()
         }
-    } catch(e) {
-            console.log("ERROR CHECK");
-            res.sendStatus(500)
-            res.end()
+    } catch (e) {
+        console.log("ERROR CHECK");
+        res.sendStatus(500)
+        res.end()
     }
 })
 
