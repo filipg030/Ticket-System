@@ -26,14 +26,14 @@ db.find({}, (err: Error, docs: [any]) => {
         idCounter = 0
     }
 })
-
+// funkcja nie potrzeba, verify_jwt automatycznie sprawdza czy token jest wygasniety.
 function verifyTokenDate(exp: number): boolean {
     if (Date.now() >= exp * 1000) {
         return false
     }
     return true
 }
-
+// funkcja sprawdza czy token w ogole przyszedl w naglowkach autoryzacji danego requesta
 function checkToken(req: Request): string {
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         let token: string = req.headers.authorization.split("Bearer")[1].trim()
@@ -41,7 +41,7 @@ function checkToken(req: Request): string {
     }
     return "no token"
 }
-
+// funkcja zwraca czy dashboard powinien byc admina czy usera
 function verifyTokenUser(email: string): string {
     if (admin_users.includes(email)) {
         return "admin"
@@ -50,7 +50,7 @@ function verifyTokenUser(email: string): string {
         return "user"
     }
 }
-
+// nalezy zmienic ta funkcje, jako iz powstala funkcja verify_jwt, ktora sprawdza od razu verify + autentycznosc tokenu.
 function tokenCheckPoint(req: Request): any {
     let token: string = checkToken(req)
     if (token == "no token") {
@@ -65,43 +65,32 @@ function tokenCheckPoint(req: Request): any {
 
 
 
-
+// token jwt od azure jest po prostu podzielony na 3 czesci, oddzielone kropkami, zakodowane w base64
 function decodeBase64Url(base64Url) {
     const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
     return JSON.parse(Buffer.from(base64, 'base64').toString('utf8'));
 }
 
 
-
-async function verify_jwt(t_id: string, access_token: string) {
+//funkcja sprawdza, czy token jest w ogole z azure.
+async function verify_jwt(t_id: string, access_token: string, k_id: string) {
     const client = new JwksClient({
-        jwksUri: `https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys` // JWKS URI for your tenant
+        jwksUri: `https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys` // JWKS URI skad biore klucze
     });
-    console.log(`https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys`);
 
-    // Function to get the signing key based on the `kid` in the JWT header
-    function getKey(header, callback) {
-        client.getSigningKey(header.kid, (err, key) => {
-            if (err) {
-                return callback(err);
-            }
-            const signingKey = key.getPublicKey();  // or key.rsaPublicKey if available
-            callback(null, signingKey);
-        });
+    const key = await client.getSigningKey(k_id); // funkcja ktora bierze klucze 
+    const signing_key = key.getPublicKey(); // funkcja zwracajaca klucz potrzebny do weryfikacji
+    try {
+        const verified_status = verify(access_token, signing_key);
+        console.log("WERYFIKACJA UDANA");
+        return true
+
+    } catch (e) {
+        console.error('WERYFIKACJA NIE UDANA: ' + e)
+        return false
     }
 
-    // Promisify the JWT verification
-    return new Promise((resolve, reject) => {
-        verify(access_token, getKey, (err, decoded) => {
-            if (err) {
-                console.error('Token verification failed:', err);
-                return reject(false);  // Reject the promise with false
-            } else {
-                console.log('Token is valid:', decoded);
-                return resolve(true);  // Resolve the promise with true
-            }
-        });
-    });
+
 }
 
 
@@ -243,7 +232,7 @@ app.post("/user_check", async (req: Request, res: Response) => {
         const t_id = token_body.tid
         console.log("HEADER K_ID: " + token_header.kid);
         console.log("BODY T_ID: " + token_body.tid);
-        if (verify_jwt(t_id, access_token)) {
+        if (verify_jwt(t_id, access_token, k_id)) {
             console.log("weryfikacja przeszla pomyslnie");
 
         } else {
