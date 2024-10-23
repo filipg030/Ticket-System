@@ -5,6 +5,7 @@ import path from 'path'
 import cors from 'cors'
 import { spawn, exec } from 'child_process'
 import { verify, decode } from 'jsonwebtoken'
+import { JwksClient } from "jwks-rsa";
 
 const app: Express = express();
 const port: number = 3001;
@@ -15,6 +16,16 @@ const admin_users = ["dsidorowicz65@tlkrakowpl.onmicrosoft.com", "dmincberger42@
 app.use(body_parser.json())
 app.use(express.static("static"))
 app.use(cors());
+
+let idCounter: number
+db.find({}, (err: Error, docs: [any]) => {
+    docs = docs.sort((a, b) => b.id - a.id);
+    if (docs[0]) {
+        idCounter = docs[0].id
+    } else {
+        idCounter = 0
+    }
+})
 
 function verifyTokenDate(exp: number): boolean {
     if (Date.now() >= exp * 1000) {
@@ -45,11 +56,52 @@ function tokenCheckPoint(req: Request): any {
     if (token == "no token") {
         return false
     }
-    let decoded_token = decode(token) // zdekodowany accesstoken z obiektu msal_token 
+    let decoded_token: any = decode(token) // zdekodowany accesstoken z obiektu msal_token 
     if (!verifyTokenDate(decoded_token.exp)) {
         return false
     }
     return decoded_token
+}
+
+
+
+
+function decodeBase64Url(base64Url) {
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    return JSON.parse(Buffer.from(base64, 'base64').toString('utf8'));
+}
+
+
+
+async function verify_jwt(t_id: string, access_token: string) {
+    const client = new JwksClient({
+        jwksUri: `https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys` // JWKS URI for your tenant
+    });
+    console.log(`https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys`);
+
+    // Function to get the signing key based on the `kid` in the JWT header
+    function getKey(header, callback) {
+        client.getSigningKey(header.kid, (err, key) => {
+            if (err) {
+                return callback(err);
+            }
+            const signingKey = key.getPublicKey();  // or key.rsaPublicKey if available
+            callback(null, signingKey);
+        });
+    }
+
+    // Promisify the JWT verification
+    return new Promise((resolve, reject) => {
+        verify(access_token, getKey, (err, decoded) => {
+            if (err) {
+                console.error('Token verification failed:', err);
+                return reject(false);  // Reject the promise with false
+            } else {
+                console.log('Token is valid:', decoded);
+                return resolve(true);  // Resolve the promise with true
+            }
+        });
+    });
 }
 
 
@@ -100,10 +152,14 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
     try {
         let ticket = {
+            id: ++idCounter,
             room: req.body.room,
             desc: req.body.desc,
             level: req.body.level,
-            status: req.body.status
+            floor: req.body.floor,
+            status: req.body.status,
+            imie: req.body.name,
+            nazwisko: req.body.surname
         }
         db.insert(ticket, () => {
             console.log("dodano ticket!")
@@ -178,7 +234,22 @@ app.post("/user_check", async (req: Request, res: Response) => {
     try {
         const email: string = req.body.email
         const load_admin: boolean = req.body.load_admin
-        console.log(load_admin);
+        const access_token: string = req.body.token
+        const split_token: Array<string> = access_token.split(".");
+        const token_header = decodeBase64Url(split_token[0]);
+        const token_body = decodeBase64Url(split_token[1])
+
+        const k_id = token_header.kid
+        const t_id = token_body.tid
+        console.log("HEADER K_ID: " + token_header.kid);
+        console.log("BODY T_ID: " + token_body.tid);
+        if (verify_jwt(t_id, access_token)) {
+            console.log("weryfikacja przeszla pomyslnie");
+
+        } else {
+            console.log("man wtf");
+
+        }
 
         if (admin_users.includes(email) && load_admin) {
             res.json({ role: "admin" })
@@ -188,28 +259,7 @@ app.post("/user_check", async (req: Request, res: Response) => {
             res.end()
         }
     } catch (e) {
-        console.log("ERROR CHECK");
-        res.sendStatus(500)
-        res.end()
-    }
-})
-
-app.post("/user_check", async (req: Request, res: Response) => {
-    console.log(req.body)
-    try {
-        const email: string = req.body.email
-        const load_admin: boolean = req.body.load_admin
-        console.log(load_admin);
-
-        if (admin_users.includes(email) && load_admin) {
-            res.json({ role: "admin" })
-            res.end()
-        } else {
-            res.json({ role: "user" })
-            res.end()
-        }
-    } catch (e) {
-        console.log("ERROR CHECK");
+        console.log(e);
         res.sendStatus(500)
         res.end()
     }
