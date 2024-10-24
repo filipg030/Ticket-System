@@ -1,4 +1,5 @@
 import axios from "axios"
+import { userTokenStore } from "../store/token"
 
 const get = async (url) => {
 
@@ -41,7 +42,16 @@ const post = async (url, object) => {
     return new Promise(async (resolve, reject) => {
 
             try {
-                const response = await axios.post(url, object)
+                const token = userTokenStore()
+                let headers = {}
+                if(token.token != null){
+                    headers = {
+                        "Authorization": `Bearer: ${token.token}`
+                    }
+                }
+                const response = await axios.post(url, object, {
+                    headers: headers
+                })
                 resolve(response.data)
             } catch (err) {
                 reject(err)

@@ -2,7 +2,7 @@
 import * as msal from 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.23.0/+esm';
 import { post } from '../api';
 import router from '../router';
-
+import { userTokenStore } from '../store/token.js'
 
 
 export default {
@@ -94,11 +94,14 @@ export default {
         let username = msal_token.account.username
         let load_admin = false     // tylko do testow usunac potem
 
-        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin})
+        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin, token: msal_token.idToken})
 
         // console.log(usernameResponse);
         
         console.log(msal_token)
+
+        const token = userTokenStore()
+        token.change(msal_token.idToken)
 
         console.log(usernameResponse);
 

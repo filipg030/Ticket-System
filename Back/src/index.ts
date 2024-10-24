@@ -36,7 +36,7 @@ function verifyTokenDate(exp: number): boolean { // bezuzyteczne
 // funkcja sprawdza czy token w ogole przyszedl w naglowkach autoryzacji danego requesta
 function checkToken(req: Request): string { 
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-        let token: string = req.headers.authorization.split("Bearer")[1].trim()
+        let token: string = req.headers.authorization.split(":")[1].trim()
         return token
     }
     return "no token"
@@ -77,9 +77,14 @@ async function verify_jwt(t_id: string, access_token: string, k_id: string) {
     const client = new JwksClient({
         jwksUri: `https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys` // JWKS URI skad biore klucze
     });
-
+    console.log("TID: "+t_id);
+    console.log("KID: "+k_id);
+    console.log("ACCESS_TOKEN: "+access_token);
+    
     const key = await client.getSigningKey(k_id); // funkcja ktora bierze klucze 
     const signing_key = key.getPublicKey(); // funkcja zwracajaca klucz potrzebny do weryfikacji
+    console.log("SIGNING_KEY: "+signing_key);
+    
     try {
         const verified_status = verify(access_token, signing_key);
         console.log("WERYFIKACJA UDANA");
@@ -154,7 +159,10 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
     const k_id = token_header.kid
     const t_id = token_body.tid
-    if (!verify_jwt(t_id,token,k_id)){
+    const verified_status = await verify_jwt(t_id,token,k_id)
+    console.log("STATUS: "+verified_status);
+    
+    if (!verified_status){
         res.send("bad token or token not from azure")
         return
     }

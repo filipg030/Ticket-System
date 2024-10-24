@@ -1,6 +1,7 @@
 <script>
 import Navbar from "../components/Navbar.vue"
 import TicketComponent from '../components/TicketComponent.vue';
+import Footer from "../components/Footer.vue";
 import Ticket from "../js/Ticket";
 import sampleTickets from "../assets/sampleTickets.json"
 import { get } from "../api";
@@ -14,6 +15,7 @@ export default {
   },
   components: {
     Navbar,
+    Footer,
     TicketComponent
   },
   methods: {
@@ -79,6 +81,7 @@ export default {
 
       <TicketComponent v-for="ticket in tickets" v-bind="ticket" />
     </div>
+    <Footer></Footer>
   </div>
 
 

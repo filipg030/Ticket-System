@@ -4,6 +4,8 @@ import Footer from '../components/Footer.vue';
 
 import Ticket from '../js/Ticket';
 
+import { userTokenStore } from "../store/token.js"
+
 import { post } from '../api';
 
 export default {
@@ -80,7 +82,8 @@ export default {
     }
   },
   mounted() {
-
+    let token = userTokenStore()
+    console.log(token.token)
   }
 }
 </script>
