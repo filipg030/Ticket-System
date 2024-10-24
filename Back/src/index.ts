@@ -96,6 +96,15 @@ async function verify_jwt(t_id: string, access_token: string, k_id: string) {
 
 // app.get("/test", async (req: Request, res: Response) => {
 
+let idCounter: number
+db.find({}, (err: Error, docs: [any]) => {
+    docs = docs.sort((a,b) => b.id - a.id);
+    if(docs[0]) {
+        idCounter = docs[0].id
+    } else {
+        idCounter = 0
+    }
+})
 
 //     let verification: any = tokenCheckPoint(req)
 //     if (!verification){
@@ -172,7 +181,7 @@ app.get("/api/get", async (req: Request, res: Response) => {
     }
 });
 
-app.get("/api/get/:id", async (req: Request, res: Response) => {
+app.get("/api/get/:id",  Create another pull request to discuss and review the changes again. Learn about pull requests async (req: Request, res: Response) => {
     try {
         let id: string = req.params.id
         db.findOne({ _id: id }, (err: Error, doc: any) => {
@@ -291,4 +300,5 @@ app.get("/make_table", async (req: Request, res: Response) => {
 
 app.listen(port, () => {
     console.log("port: " + port)
+
 });

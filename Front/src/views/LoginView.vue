@@ -1,6 +1,7 @@
 <script>
 import * as msal from 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.23.0/+esm';
 import { post } from '../api';
+import router from '../router';
 
 
 
@@ -91,7 +92,7 @@ export default {
         let msal_token = await myMsal.loginPopup(this.loginRequest)
 
         let username = msal_token.account.username
-        let load_admin = false
+        let load_admin = false     // tylko do testow usunac potem
 
         let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin})
 
@@ -100,6 +101,12 @@ export default {
         console.log(msal_token)
 
         console.log(usernameResponse);
+
+        if(usernameResponse.role == "admin"){
+          router.push({ path: 'admin' })
+        } else {
+          router.push({ path: 'user' })
+        }
         
 
 

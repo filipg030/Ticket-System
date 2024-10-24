@@ -2,7 +2,7 @@ import axios from "axios"
 
 const get = async (url) => {
 
-
+    return new Promise(async (resolve, reject) => {
         setTimeout(async () => {
             try {
                 const response = await axios.get(url)
@@ -12,6 +12,7 @@ const get = async (url) => {
             }
 
 
+        })
     })
 }
 
@@ -67,5 +68,6 @@ const patch = async (url, object) => {
 
 
 export {
+    get,
     post
 }
