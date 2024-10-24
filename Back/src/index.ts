@@ -27,14 +27,14 @@ db.find({}, (err: Error, docs: [any]) => {
     }
 })
 // funkcja nie potrzeba, verify_jwt automatycznie sprawdza czy token jest wygasniety.
-function verifyTokenDate(exp: number): boolean {
+function verifyTokenDate(exp: number): boolean { // bezuzyteczne
     if (Date.now() >= exp * 1000) {
         return false
     }
     return true
 }
 // funkcja sprawdza czy token w ogole przyszedl w naglowkach autoryzacji danego requesta
-function checkToken(req: Request): string {
+function checkToken(req: Request): string { 
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         let token: string = req.headers.authorization.split("Bearer")[1].trim()
         return token
@@ -143,12 +143,21 @@ osobne rzeczy dla admina i usera
 
 
 app.post("/api/add", async (req: Request, res: Response) => {
-    let verification: boolean | object = tokenCheckPoint(req)
-    if (!verification) {
+    let token = checkToken(req);
+    if (token == "no token"){
         res.send("token verification failed")
         return
     }
+    const split_token: Array<string> = token.split(".");
+    const token_header = decodeBase64Url(split_token[0]);
+    const token_body = decodeBase64Url(split_token[1])
 
+    const k_id = token_header.kid
+    const t_id = token_body.tid
+    if (!verify_jwt(t_id,token,k_id)){
+        res.send("bad token or token not from azure")
+        return
+    }
     try {
         let ticket = {
             id: ++idCounter,
