@@ -12,6 +12,7 @@ export default {
     return {
       powaga: 0,
       imie: null,
+
       nazwisko: null,
       sala: null,
       problem: null,
@@ -28,6 +29,7 @@ export default {
       ],
 
       ticket:null
+
     }
   },
   components: {
@@ -93,16 +95,21 @@ export default {
       <div class="flex flex-row justify-between gap-2">
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Imie</label>
+
           <input class="slateTextInput w-full" type="text" id="imieInput" v-model="imie">
+
         </div>
 
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Nazwisko</label>
+
           <input class="slateTextInput w-full" type="text" id="nazwiskoInput" v-model="nazwisko">
+
         </div>
       </div>
 
       <label for="pietroInput">Piętro</label>
+
       <div class="rounded-xl p-0 overflow-hidden flex flex-row">
         <select v-model="pietro" nazwa="pietro"
           class="w-full bg-slate-600 p-2 text-slate-100 font-semibold focus:outline-none" id="pietroInput">
@@ -128,6 +135,7 @@ export default {
 
       <label for="problemInput">Problem</label>
       <textarea class="slateTextArea" id="problemInput" rows="10" v-model="problem"></textarea>
+
       <label for="problemInput">Powaga</label>
       <div class="flex flex-row gap-2">
         <button class="pointer p-2 rounded-md bg-red-500 hover:bg-red-600 w-full"

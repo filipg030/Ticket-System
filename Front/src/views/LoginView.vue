@@ -96,6 +96,10 @@ export default {
 
         let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin})
 
+        // console.log(usernameResponse);
+        
+        console.log(msal_token)
+
         console.log(usernameResponse);
 
         if(usernameResponse.role == "admin"){
@@ -104,6 +108,7 @@ export default {
           router.push({ path: 'user' })
         }
         
+
 
       } catch (error) {
         console.log(error);
