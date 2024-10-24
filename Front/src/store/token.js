@@ -10,5 +10,6 @@ export const userTokenStore = defineStore("token", {
         change(newToken){
             this.token = newToken
         }
-     }
+     },
+     persist: true,
 })
