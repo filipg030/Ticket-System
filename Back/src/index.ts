@@ -10,6 +10,7 @@ import { JwksClient } from "jwks-rsa";
 const app: Express = express();
 const port: number = 3001;
 const db: DataStore = new DataStore({ filename: "./db/tickets.db", autoload: true })
+const archive_db: DataStore = new DataStore({ filename: "./db/archive.db", autoload: true })
 const body_parser = BodyParser
 const admin_users = ["dsidorowicz65@tlkrakowpl.onmicrosoft.com", "dmincberger42@tlkrakowpl.onmicrosoft.com", "adusik61@tlkrakowpl.onmicrosoft.com", "mmikolajczyk69@tlkrakowpl.onmicrosoft.com", "fgrudziecki25@tlkrakowpl.onmicrosoft.com"]
 
@@ -34,7 +35,7 @@ function verifyTokenDate(exp: number): boolean { // bezuzyteczne
     return true
 }
 // funkcja sprawdza czy token w ogole przyszedl w naglowkach autoryzacji danego requesta
-function checkToken(req: Request): string { 
+function checkToken(req: Request): string | any { 
     if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
         let token: string = req.headers.authorization.split(":")[1].trim()
         return token
@@ -51,17 +52,7 @@ function verifyTokenUser(email: string): string {
     }
 }
 // nalezy zmienic ta funkcje, jako iz powstala funkcja verify_jwt, ktora sprawdza od razu verify + autentycznosc tokenu.
-function tokenCheckPoint(req: Request): any {
-    let token: string = checkToken(req)
-    if (token == "no token") {
-        return false
-    }
-    let decoded_token: any = decode(token) // zdekodowany accesstoken z obiektu msal_token 
-    if (!verifyTokenDate(decoded_token.exp)) {
-        return false
-    }
-    return decoded_token
-}
+
 
 
 
@@ -97,6 +88,24 @@ async function verify_jwt(t_id: string, access_token: string, k_id: string) {
 
 
 }
+
+async function verify_request(req){
+    let token = checkToken(req);
+    if (token == "no token"){
+        console.log("REQUEST DOES NOT CONTAIN A TOKEN");
+        
+        return false
+    }
+    const split_token: Array<string> = token.split(".");
+    const token_header = decodeBase64Url(split_token[0]);
+    const token_body = decodeBase64Url(split_token[1])
+
+    const k_id = token_header.kid
+    const t_id = token_body.tid
+    const verified_status = await verify_jwt(t_id,token,k_id)
+    return verified_status
+}
+
 
 
 app.get("/test", async (req: Request, res: Response) => {
@@ -147,25 +156,15 @@ osobne rzeczy dla admina i usera
 // obecne: sala, opis, poziom problemu, status, imie, nazwisko
 
 
-app.post("/api/add", async (req: Request, res: Response) => {
-    let token = checkToken(req);
-    if (token == "no token"){
-        res.send("token verification failed")
-        return
-    }
-    const split_token: Array<string> = token.split(".");
-    const token_header = decodeBase64Url(split_token[0]);
-    const token_body = decodeBase64Url(split_token[1])
 
-    const k_id = token_header.kid
-    const t_id = token_body.tid
-    const verified_status = await verify_jwt(t_id,token,k_id)
-    console.log("STATUS: "+verified_status);
-    
-    if (!verified_status){
-        res.send("bad token or token not from azure")
+
+app.post("/api/add", async (req: Request, res: Response) => {
+
+    if (!verify_request(req)){
+        res.send("verification failed")
         return
     }
+
     try {
         let ticket = {
             id: ++idCounter,
@@ -202,7 +201,7 @@ app.get("/api/get", async (req: Request, res: Response) => {
 app.get("/api/get/:id", (req: Request, res: Response) => {
     try {
         let id: string = req.params.id
-        db.findOne({ _id: id }, (err: Error, doc: any) => {
+        db.findOne({ id: id }, (err: Error, doc: any) => {
             if (doc == null) {
                 res.send("nie znaleziono ticketa")
             }
@@ -216,13 +215,17 @@ app.get("/api/get/:id", (req: Request, res: Response) => {
     }
 });
 
-app.get("/api/remove/:id", async (req: Request, res: Response) => {
-    let verification: any = tokenCheckPoint(req)
-    if (!verification) {
-        res.send("token verification failed")
+app.delete("/api/remove/:id", async (req: Request, res: Response) => {
+
+    if (!verify_request(req)){
+        res.send("verification failed")
         return
     }
-    let userType: string = verifyTokenUser(verification.upn)
+
+    let token = checkToken(req)
+    let email = token.preferred_username
+
+    let userType: string = verifyTokenUser(email)
     if (userType == "user") {
         res.send("not permitted")
         return
@@ -230,7 +233,7 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
 
     try {
         let id: string = req.params.id
-        db.remove({ _id: id }, (err: Error, docs: number) => {
+        db.remove({ id: id }, (err: Error, docs: number) => {
             if (docs == 0) {
                 res.send("nie znaleziono ticketa")
             }
@@ -244,29 +247,51 @@ app.get("/api/remove/:id", async (req: Request, res: Response) => {
     }
 });
 
+app.patch("/api/archive/:id", async (req: Request, res: Response) => {
+
+    // if (!verify_request(req)){
+    //     res.send("verification failed")
+    //     return
+    // }
+
+    // let token = checkToken(req)
+    // let email = token.preferred_username
+
+    // let userType: string = verifyTokenUser(email)
+    // if (userType == "user") {
+    //     res.send("not permitted")
+    //     return
+    // }
+
+    try {
+        let id: number = parseInt(req.params.id)
+        db.findOne({ id: id }, (err: Error, doc: any) => {
+            if (doc == null) {
+                res.send("nie znaleziono ticketa")
+                return
+            }
+            doc.status = "closed"
+            archive_db.insert(doc)
+            db.remove({ id: id })
+            res.send("przeniesiono ticket do archiwum")
+        })
+    } catch (err) {
+        console.log(err)
+        res.send("wystąpił błąd")
+    }
+
+});
+
 
 app.post("/user_check", async (req: Request, res: Response) => {
-    console.log(req.body)
     try {
         const email: string = req.body.email
         const load_admin: boolean = req.body.load_admin
-        const access_token: string = req.body.token
-        const split_token: Array<string> = access_token.split(".");
-        const token_header = decodeBase64Url(split_token[0]);
-        const token_body = decodeBase64Url(split_token[1])
 
-        const k_id = token_header.kid
-        const t_id = token_body.tid
-        console.log("HEADER K_ID: " + token_header.kid);
-        console.log("BODY T_ID: " + token_body.tid);
-        if (verify_jwt(t_id, access_token, k_id)) {
-            console.log("weryfikacja przeszla pomyslnie");
-
-        } else {
-            console.log("man wtf");
-
+        if (!verify_request(req)){
+            res.send("verification failed")
+            return
         }
-
         if (admin_users.includes(email) && load_admin) {
             res.json({ role: "admin" })
             res.end()
@@ -282,6 +307,12 @@ app.post("/user_check", async (req: Request, res: Response) => {
 })
 
 app.get("/make_table", async (req: Request, res: Response) => {
+
+    if (!verify_request(req)){
+        res.send("verification failed")
+        return
+    }
+
     const pythonProcess = spawn('../../venv/Scripts/python.exe', ['./static/excel_script.py']);
     let responseSent = false;
 
