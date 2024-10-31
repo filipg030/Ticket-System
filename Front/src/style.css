@@ -5,9 +5,9 @@
 
 
 @layer components {
-    .roseTextInput {
-        @apply p-2 bg-rose-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75
+    .zslorangeTextInput {
+        @apply p-2 bg-zslorange-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-zslorange-700 focus:outline-none focus:ring focus:ring-zslorange-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
     .slateTextInput {
@@ -15,32 +15,23 @@
         hover:bg-slate-700 focus:outline-none focus:ring focus:bg-slate-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
-    .seagullTextInput {
-        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75
-        placeholder:text-slate-900/75 placeholder:font-light;
-    }
     .slateTextArea {
         @apply p-2 bg-slate-500 text-white font-semibold rounded-lg shadow-md 
         hover:bg-slate-700 focus:outline-none focus:ring focus:bg-slate-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
-    .seagullTextArea {
-        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75
+    .zslblueTextArea {
+        @apply p-2 bg-zslblue-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-zslblue-700 focus:outline-none focus:ring focus:ring-zslblue-400 focus:ring-opacity-75
         placeholder:text-slate-900/75 placeholder:font-light;
     }
-    .seagullBtn {
-        @apply p-2 bg-seagull-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-seagull-700 focus:outline-none focus:ring focus:ring-seagull-400 focus:ring-opacity-75;
+    .zslblueBtn {
+        @apply p-2 bg-zslblue-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-zslblue-700 focus:outline-none focus:ring focus:ring-zslblue-400 focus:ring-opacity-75;
     }
-    .caribbeanBtn {
-        @apply p-2 bg-caribbean-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-caribbean-700 focus:outline-none focus:ring focus:ring-caribbean-400 focus:ring-opacity-75;
-    }
-    .roseBtn {
-        @apply p-2 bg-rose-500 text-white font-semibold rounded-lg shadow-md 
-        hover:bg-rose-700 focus:outline-none focus:ring focus:ring-rose-400 focus:ring-opacity-75;
+    .zslorangeBtn {
+        @apply p-2 bg-zslorange-500 text-white font-semibold rounded-lg shadow-md 
+        hover:bg-zslorange-700 focus:outline-none focus:ring focus:ring-zslorange-400 focus:ring-opacity-75;
         }
     
   }

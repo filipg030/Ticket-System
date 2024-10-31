@@ -1,12 +1,12 @@
 class Ticket{
-    done = false;
+    done = "---";
     id = 0;
 
     constructor(imie,nazwisko,pietro,sala,problem,powaga){
         this.imie = imie;
         this.nazwisko = nazwisko;
         this.pietro = pietro;
-        this.sala = sala;
+        this.sala = "" + sala;
         this.problem = problem;
         this.powaga = powaga;
     }

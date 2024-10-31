@@ -1,7 +1,8 @@
 <script>
 import * as msal from 'https://cdn.jsdelivr.net/npm/@azure/msal-browser@3.23.0/+esm';
 import { post } from '../api';
-
+import router from '../router';
+import { userTokenStore } from '../store/token.js'
 
 
 export default {
@@ -23,84 +24,35 @@ export default {
     }
   },
   methods:{
-    base64UrlDecode(str) {
-        let output = str.replace(/-/g, "+").replace(/_/g, "/");
-        switch (output.length % 4) {
-            case 0:
-                break;
-            case 2:
-                output += "==";
-                break;
-            case 3:
-                output += "=";
-                break;
-            default:
-                throw new Error("base64 string is not of the correct length");
-        }
-        try {
-            return b64DecodeUnicode(output);
-        }
-        catch (err) {
-            return atob(output);
-        }
-    },
-
-    jwtDecode(token, options) {
-        if (typeof token !== "string") {
-
-        }
-        options || (options = {});
-        const pos = options.header === true ? 0 : 1;
-        const part = token.split(".")[pos];
-        if (typeof part !== "string") {
-            console.log("ERROR: "+e);
-            
-        }
-        let decoded;
-        try {
-            decoded = base64UrlDecode(part);
-        }
-        catch (e) {
-
-        }
-        try {
-            console.log(decoded);
-            
-            return JSON.parse(decoded);
-        }
-        catch (e) {
-
-        }
-    },
-
-    b64DecodeUnicode(str) {
-      return decodeURIComponent(atob(str).replace(/(.)/g, (m, p) => {
-          let code = p.charCodeAt(0).toString(16).toUpperCase();
-          if (code.length < 2) {
-              code = "0" + code;
-          }
-          return "%" + code;
-        }))
-    },
 
     async loginClicked() {
       this.adminUser = 1
       try {
-        console.log("Login button clicked");
         const myMsal = new msal.PublicClientApplication(this.config);
         await myMsal.initialize()
         let msal_token = await myMsal.loginPopup(this.loginRequest)
 
-        console.log(msal_token);
-        
-
-        console.log(msal_token.account.username);
         let username = msal_token.account.username
+        let load_admin = false     // tylko do testow usunac potem
 
-        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username})
+        let usernameResponse = await post("http://localhost:3001/user_check" ,{email: username, load_admin: load_admin, token: msal_token.idToken})
+
+        // console.log(usernameResponse);
+        
+        console.log(msal_token)
+
+        const token = userTokenStore()
+        token.change(msal_token.idToken)
 
         console.log(usernameResponse);
+
+        if(usernameResponse.role == "admin"){
+          router.push({ path: 'admin' })
+        } else {
+          router.push({ path: 'user' })
+        }
         
+
 
       } catch (error) {
         console.log(error);
@@ -137,7 +89,7 @@ export default {
     <div class="z-10 w-64 h-fit border rounded-lg p-2 bg-slate-100 shadow-lg shadow-black/50 text-slate-100">
         <div v-if="adminUser == 0" class="flex flex-row gap-2 justify-stretch">
         <button id="loginBt"class="rounded-md w-full h-16 p-2 bg-slate-500" @click="loginClicked"><i class="text-xl uil uil-microsoft"></i>  Zaloguj z Microsoft</button>
-        <!-- <button class="rounded-md w-full h-16 p-2 bg-rose-500" @click="adminUser=2">Admin</button> -->
+        <!-- <button class="rounded-md w-full h-16 p-2 bg-zslorange-500" @click="adminUser=2">Admin</button> -->
         </div>
     <div class="flex flex-col gap-2 text-center" v-if="adminUser == 1">
         <p class="mb-2 text-slate-950/75">Zaloguj się w oknie Microsoft...</p>
@@ -145,8 +97,8 @@ export default {
     <!--
     <div class="flex flex-col gap-2" v-if="adminUser == 2">
         <p class="mb-2 text-slate-950/75">Admin</p>
-        <input class="roseTextInput" type="text" placeholder="login" name="username" id="username">
-        <input class="roseTextInput" type="password" placeholder="hasło" name="passwd" id="passwd">
+        <input class="zslorangeTextInput" type="text" placeholder="login" name="username" id="username">
+        <input class="zslorangeTextInput" type="password" placeholder="hasło" name="passwd" id="passwd">
         <button class="backBtn" @click="adminUser=0">wróć</button>
     </div> -->
     </div>

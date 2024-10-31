@@ -1,38 +1,83 @@
 <script>
 import Navbar from "../components/Navbar.vue"
 import TicketComponent from '../components/TicketComponent.vue';
+import Footer from "../components/Footer.vue";
 import Ticket from "../js/Ticket";
 import sampleTickets from "../assets/sampleTickets.json"
+import { get } from "../api";
 
 export default {
 
   data() {
     return {
-      tickets: []
+      tickets: [],
+      sortColumn: "",
+      sortDirection: false // false - desc, true - asc
     }
   },
   components: {
     Navbar,
+    Footer,
     TicketComponent
   },
   methods: {
+    toggleSort(column) {
+      if (column == this.sortColumn) { this.sortDirection = !this.sortDirection }
+      else {
+        this.sortColumn = column;
+        this.sortDirection = true;
+      }
+
+      this.sortColumnFunc(this.sortColumn)
+    },
+    chevronDirection(column) {
+      if (column == this.sortColumn) {
+        if (this.sortDirection) return "pi pi-chevron-up"
+        else return "pi pi-chevron-down"
+      }
+      else {
+        return "pi pi-code rotate-90"
+      }
+    },
+
+    sortColumnFunc(byWhat) {
+      console.log(this.tickets);
+
+      
+      if(byWhat == "id" || byWhat == "powaga"){
+        this.tickets.sort((a, b) => a[byWhat] - b[byWhat]);
+      }
+       else {
+        this.tickets.sort((a, b) => a[byWhat].localeCompare(b[byWhat]))
+      }
+      console.log(this.tickets[0].powaga);
+      
+      if(!this.sortDirection) this.tickets.reverse();
+
+    }
+  },
+  computed: {
 
   },
+  async mounted() {
+    let ticketsFromDB = await get("http://localhost:3001/api/get")
+    // console.log(ticketsFromDB);
 
-  mounted() {
-    for (let i = 0; i < sampleTickets.length; i++) {
-      const ticketData = sampleTickets[i];
+
+    for (let i = 0; i < ticketsFromDB.length; i++) {
+      const ticketData = ticketsFromDB[i];
 
       let ticket = new Ticket(
         ticketData.imie,
         ticketData.nazwisko,
-        ticketData.pietro,
-        ticketData.sala,
-        ticketData.problem,
-        ticketData.powaga
+        ticketData.floor,
+        ticketData.room,
+        ticketData.desc,
+        ticketData.level
       );
 
-      ticket.id = i;
+      ticket.done = ticketData.status
+      ticket.id = ticketData.id;
 
       console.log(i, ticket)
 
@@ -48,31 +93,39 @@ export default {
     <Navbar></Navbar>
     <div class="main" style="min-width: 840px;">
       <div class="descriptionBar">
-        <div class="w-1/10" id="ticketID">
+        <div class="w-1/10 columnHeader" id="ticketID">
           <h2>ID</h2>
+          <i @click="toggleSort('id')" :class="chevronDirection('id')"></i>
         </div>
-        <div class="w-1/10" id="ticketRoom">
+        <div class="w-1/10 columnHeader" id="ticketRoom">
           <h2>Sala</h2>
+          <i @click="toggleSort('sala')" :class="chevronDirection('sala')"></i>
         </div>
-        <div class="w-1/10" id="ticketLastName">
+        <div class="w-1/10 columnHeader" id="ticketLastName">
           <h2>Nazwisko</h2>
+          <i @click="toggleSort('nazwisko')" :class="chevronDirection('nazwisko')"></i>
         </div>
-        <div class="w-1/10" id="ticketFirstName">
+        <div class="w-1/10 columnHeader" id="ticketFirstName">
           <h2>Imie</h2>
+          <i @click="toggleSort('imie')" :class="chevronDirection('imie')"></i>
         </div>
-        <div class="w-2/5" id="ticketProblemDesc">
+        <div class="w-2/5 columnHeader" id="ticketProblemDesc">
           <h2>Opis problemu</h2>
+          <i @click="toggleSort('problem')" :class="chevronDirection('problem')"></i>
         </div>
-        <div class="w-1/10" id="ticketSeverity">
+        <div class="w-1/10 columnHeader" id="ticketSeverity">
           <h2>Stopień problemu</h2>
+          <i @click="toggleSort('powaga')" :class="chevronDirection('powaga')"></i>
         </div>
-        <div class="w-1/10" id="ticketResolution">
+        <div class="w-1/10 columnHeader" id="ticketResolution">
           <h2>Status</h2>
+          <i @click="toggleSort('done')" :class="chevronDirection('done')"></i>
         </div>
       </div>
 
       <TicketComponent v-for="ticket in tickets" v-bind="ticket" />
     </div>
+    <Footer></Footer>
   </div>
 
 
@@ -113,6 +166,14 @@ label {
 }
 
 h2 {
-  @apply font-bold;
+  @apply font-bold w-auto;
+}
+
+i{
+  @apply text-black z-50 cursor-pointer
+}
+
+.columnHeader{
+  @apply relative flex flex-row items-center justify-between
 }
 </style>
