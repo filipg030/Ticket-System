@@ -128,6 +128,7 @@ export default {
           <label for="salaInput">Imie</label>
 
           <p class="slateTextInput w-full" type="text" id="imieInput" v-text="imie"></p>
+          <input class="slateTextInput w-full" type="text" id="imieInput" v-model="imie">
 
         </div>
 
@@ -135,6 +136,7 @@ export default {
           <label for="salaInput">Nazwisko</label>
 
           <p class="slateTextInput w-full" type="text" id="nazwiskoInput" v-text="nazwisko"></p>
+          <input class="slateTextInput w-full" type="text" id="nazwiskoInput" v-model="nazwisko">
 
         </div>
       </div>
