@@ -9,6 +9,9 @@ export const userTokenStore = defineStore("token", {
     actions: {
         change(newToken){
             this.token = newToken
+        },
+        clear(){
+            this.token = null;
         }
      },
      persist: true,

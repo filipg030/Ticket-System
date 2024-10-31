@@ -8,6 +8,9 @@ import { userTokenStore } from "../store/token.js"
 
 import { post } from '../api';
 
+import * as Token from "../js/Token.js";
+
+
 export default {
 
   data() {
@@ -39,6 +42,11 @@ export default {
     Footer
   },
   methods: {
+
+    showSendTicketModal(){
+      this.$refs.acceptTicketModal.showModal();
+    },
+
     async sendTicket() {
       //check if all values are set
 
@@ -53,6 +61,7 @@ export default {
         // obraź użytkownika słownie
 
         console.error("nnn");
+        alert("niepoprawnie wypełnione pola")
       }
       else{
         // wyślij
@@ -61,10 +70,18 @@ export default {
 
         console.log(sendTicket);
 
+        window.location.reload();
+
       }
 
+      // handle modal logic
+      this.$refs.acceptTicketModal.close();
+    },
 
-    }
+    cancelTicketSend(){
+      // handle modal logic
+      this.$refs.acceptTicketModal.close();
+    },
   },
   computed: {
     validSale() {
@@ -84,6 +101,18 @@ export default {
   mounted() {
     let token = userTokenStore()
     console.log(token.token)
+    console.log(Token.jwtDecode(token.token));
+    let decodedToken = Token.jwtDecode(token.token)
+
+    let name = decodedToken.name.split(" ")
+    
+    this.imie = name[0]
+    this.nazwisko = name[1]
+
+    console.log(this.imie, this.nazwisko);
+    
+    
+
   }
 }
 </script>
@@ -91,7 +120,6 @@ export default {
 <template>
   <div style="width: 100%;">
     <Navbar></Navbar>
-
   </div>
   <div class="w-full h-max flex justify-center">
     <div class="m-4 w-2/3 flex flex-col gap-1">
@@ -99,6 +127,7 @@ export default {
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Imie</label>
 
+          <p class="slateTextInput w-full" type="text" id="imieInput" v-text="imie"></p>
           <input class="slateTextInput w-full" type="text" id="imieInput" v-model="imie">
 
         </div>
@@ -106,6 +135,7 @@ export default {
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Nazwisko</label>
 
+          <p class="slateTextInput w-full" type="text" id="nazwiskoInput" v-text="nazwisko"></p>
           <input class="slateTextInput w-full" type="text" id="nazwiskoInput" v-model="nazwisko">
 
         </div>
@@ -115,7 +145,7 @@ export default {
 
       <div class="rounded-xl p-0 overflow-hidden flex flex-row">
         <select v-model="pietro" nazwa="pietro"
-          class="w-full bg-slate-600 p-2 text-slate-100 font-semibold focus:outline-none" id="pietroInput">
+          class="w-full bg-slate-600 p-2 text-slate-100 font-semibold focus:outline-none rounded-md" id="pietroInput">
 
           <option v-for="pietro in pietra" :value=pietro.nazwa>{{ pietro.nazwa }}</option>
         </select>
@@ -145,17 +175,24 @@ export default {
           :class="{ 'inactiveBtn': powaga != 2 }" @click="powaga = 2">Ważne!</button>
         <button class="pointer p-2 rounded-md bg-yellow-500 hover:bg-yellow-600 w-full"
           :class="{ 'inactiveBtn': powaga != 1 }" @click="powaga = 1">Troche ważne</button>
-        <button class="pointer p-2 rounded-md bg-caribbean-500 hover:bg-caribbean-600 w-full"
+        <button class="pointer p-2 rounded-md bg-zslblue-500 hover:bg-zslblue-600 w-full"
           :class="{ 'inactiveBtn': powaga != 0 }" @click="powaga = 0">Nie pali sie</button>
       </div>
       <div class="w-full h-0 border-b-2 my-4 border-slate-500"></div>
-      <button @click=sendTicket class="caribbeanBtn">Wyślij <i class="text-xl uil uil-envelope-upload"></i></button>
+      <button @click=showSendTicketModal class="zslblueBtn">Wyślij <i class="text-xl uil uil-envelope-upload"></i></button>
     </div>
   </div>
   <div style="width: 100%; position: absolute; bottom: 0;">
     <Footer></Footer>
-
   </div>
+
+  <dialog ref="acceptTicketModal" class="ticketConfirmModal">
+    <p>Czy na pewno chcesz wysłać ten ticket?</p>
+    <div class="absolute bottom-2 right-2 flex flex-row gap-2">
+      <button class="zslorangeBtn" @click="cancelTicketSend">anuluj</button>
+      <button class="zslorangeBtn" @click="sendTicket">wyślij</button>
+    </div>
+  </dialog>
 </template>
 
 <style scoped>
@@ -166,5 +203,18 @@ label {
 .inactiveBtn {
   filter: grayscale(75%);
   opacity: 75%;
+}
+
+.ticketConfirmModal{
+  @apply relative bg-zslblue z-50 p-4 rounded-md;
+}
+
+.ticketConfirmModal{
+  width: 300px;
+  height: 150px;
+}
+
+.ticketConfirmModal::backdrop{
+  @apply bg-black/50;
 }
 </style>

@@ -1,4 +1,7 @@
 <script>
+import { userTokenStore } from "../store/token.js"
+import router from '../router';
+
 export default {
   
   data() {
@@ -6,7 +9,14 @@ export default {
     }
   },
   methods:{
+    logout() {
 
+      
+        userTokenStore().clear()
+
+        router.push("/")
+
+    }
   },
 
   mounted() {
@@ -42,9 +52,9 @@ export default {
     <p id="currentTime" style="display: flex; align-items: center; justify-content: center; font-size: x-large; color:white;"></p>
     
     <div style="width: 281px;" class="w-128 h-16 flex justify-end align-middle">
-      <RouterLink style="display: flex; justify-content: center; align-items: center;" class="logoutBt w-24 flex justify-center align-middle text-center" to="/">
+      <button style="display: flex; justify-content: center; align-items: center;" class="logoutBt w-24 flex justify-center align-middle text-center" @click="logout">
         Wyloguj
-      </RouterLink></div>
+      </button></div>
     
   </div>
 </template>

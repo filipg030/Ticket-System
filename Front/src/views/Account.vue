@@ -33,12 +33,12 @@ export default {
     <div class="m-4 w-2/3 flex flex-col gap-1">
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">imie</label>
-          <input class="seagullTextInput w-full" type="text" id="imieInput">
+          <input class="zslblueTextInput w-full" type="text" id="imieInput">
         </div>
 
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">nazwisko</label>
-          <input class="seagullTextInput w-full" type="text" id="nazwiskoInput">
+          <input class="zslblueTextInput w-full" type="text" id="nazwiskoInput">
         </div>
 
         <div class="w-full h-0 border-b-2 my-4 border-slate-500"></div>
@@ -46,23 +46,23 @@ export default {
 
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Stare hasło</label>
-          <input class="seagullTextInput w-full" type="password" id="stareHasloInput">
+          <input class="zslblueTextInput w-full" type="password" id="stareHasloInput">
         </div>
 
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Nowe hasło</label>
-          <input class="seagullTextInput w-full" type="password" id="noweHasloInput">
+          <input class="zslblueTextInput w-full" type="password" id="noweHasloInput">
         </div>
 
         <div class="w-1/2 flex flex-col">
           <label for="salaInput">Potwierdź nowe hasło</label>
-          <input class="seagullTextInput w-full" type="password" id="noweHasloConfirmInput">
+          <input class="zslblueTextInput w-full" type="password" id="noweHasloConfirmInput">
         </div>
 
 
 
 <div class="w-full h-0 border-b-2 my-4 border-slate-500"></div>
-      <button class="caribbeanBtn">Zapisz <i class="uil uil-save"></i></button>
+      <button class="zslblueBtn">Zapisz <i class="uil uil-save"></i></button>
     </div>
   </div>
 </template>
