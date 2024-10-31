@@ -156,7 +156,24 @@ osobne rzeczy dla admina i usera
 // obecne: sala, opis, poziom problemu, status, imie, nazwisko
 
 
+// jeżeli wywołamy np. w lutym 2025r. to 2024/2025
+// jeżeli wywołamy np. w listopadzie 2025r. to 2025/2026
+function setDate(): string {
+    let date: Date = new Date()
+    let year: number = date.getFullYear()
+    let month: number = date.getMonth()
+    let return_year : string
+    if(month < 8) {
+        return_year = `${year-1}/${year}`
+    }
+    if (month >= 8) {
+        return_year = `${year}/${year+1}`        
+    }
+    return return_year
+}
 
+console.log(new Date().getFullYear())
+console.log(new Date().getMonth())
 
 app.post("/api/add", async (req: Request, res: Response) => {
 
@@ -173,8 +190,9 @@ app.post("/api/add", async (req: Request, res: Response) => {
             level: req.body.level,
             floor: req.body.floor,
             status: req.body.status,
-            imie: req.body.name,
-            nazwisko: req.body.surname
+            name: req.body.name,
+            surname: req.body.surname,
+            date: setDate()
         }
         db.insert(ticket, () => {
             console.log("dodano ticket!")
@@ -208,6 +226,18 @@ app.get("/api/get/:id", (req: Request, res: Response) => {
             else {
                 res.send(doc)
             }
+        })
+    } catch (err) {
+        console.log(err)
+        res.send("wystąpił błąd")
+    }
+});
+
+app.get("/api/get_archive", async (req: Request, res: Response) => {
+    try {
+        archive_db.find({}, (err: Error, docs: [any]) => {
+            console.log(docs)
+            res.send(docs)
         })
     } catch (err) {
         console.log(err)
