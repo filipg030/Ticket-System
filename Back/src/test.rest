@@ -12,3 +12,7 @@ Authorization: Bearer febyuifobeqaidwnbiqdjnwqdjqw
 
 GET http://localhost:3001/api/get_archive HTTP/1.1 
 Authorization: Bearer febyuifobeqaidwnbiqdjnwqdjqw
+
+###
+
+GET http://localhost:3001/make_table/2024-2025

@@ -6,6 +6,7 @@ import cors from 'cors'
 import { spawn, exec } from 'child_process'
 import { verify, decode } from 'jsonwebtoken'
 import { JwksClient } from "jwks-rsa";
+import {utils,writeFile} from 'xlsx'
 
 const app: Express = express();
 const port: number = 3001;
@@ -20,9 +21,9 @@ app.use(cors());
 
 let idCounter: number
 db.find({}, (err: Error, docs: [any]) => {
-    docs = docs.sort((a, b) => b.id - a.id);
+    docs = docs.sort((a, b) => b._id - a._id);
     if (docs[0]) {
-        idCounter = docs[0].id
+        idCounter = docs[0]._id
     } else {
         idCounter = 0
     }
@@ -65,6 +66,8 @@ function decodeBase64Url(base64Url) {
 
 //funkcja sprawdza, czy token jest w ogole z azure.
 async function verify_jwt(t_id: string, access_token: string, k_id: string) {
+    try {
+
     const client = new JwksClient({
         jwksUri: `https://login.microsoftonline.com/${t_id}/discovery/v2.0/keys` // JWKS URI skad biore klucze
     });
@@ -76,7 +79,6 @@ async function verify_jwt(t_id: string, access_token: string, k_id: string) {
     const signing_key = key.getPublicKey(); // funkcja zwracajaca klucz potrzebny do weryfikacji
     console.log("SIGNING_KEY: "+signing_key);
     
-    try {
         const verified_status = verify(access_token, signing_key);
         console.log("WERYFIKACJA UDANA");
         return true
@@ -90,6 +92,7 @@ async function verify_jwt(t_id: string, access_token: string, k_id: string) {
 }
 
 async function verify_request(req){
+    try {
     let token = checkToken(req);
     if (token == "no token"){
         console.log("REQUEST DOES NOT CONTAIN A TOKEN");
@@ -104,39 +107,11 @@ async function verify_request(req){
     const t_id = token_body.tid
     const verified_status = await verify_jwt(t_id,token,k_id)
     return verified_status
+} catch (e){
+    console.log("BLAD W WERYFIKACJI REQUESTU! " + e);
+    return
 }
-
-
-
-app.get("/test", async (req: Request, res: Response) => {
-
-let idCounter: number
-db.find({}, (err: Error, docs: [any]) => {
-    docs = docs.sort((a,b) => b.id - a.id);
-    if(docs[0]) {
-        idCounter = docs[0].id
-    } else {
-        idCounter = 0
-    }
-})
-
-
-});
-
-// let verification: any = tokenCheckPoint(req)
-// if (!verification){
-//     res.send("token verification failed")
-//     return
-// }    
-// let userType: string = verifyTokenUser(decoded_token.upn)
-// if (userType == "user"){
-// res.send("user signed in")
-// return
-// }
-// if (userType == "admin"){
-// res.send("admin signed in")
-// return
-// }
+}
 
 // dane ticketa:
 // obecne: sala, opis, poziom problemu, status, imie, nazwisko
@@ -164,16 +139,13 @@ function setDate(): string {
     let month: number = date.getMonth()
     let return_year : string
     if(month < 8) {
-        return_year = `${year-1}/${year}`
+        return_year = `${year-1}-${year}`
     }
     if (month >= 8) {
-        return_year = `${year}/${year+1}`        
+        return_year = `${year}-${year+1}`        
     }
     return return_year
 }
-
-console.log(new Date().getFullYear())
-console.log(new Date().getMonth())
 
 app.post("/api/add", async (req: Request, res: Response) => {
 
@@ -184,7 +156,7 @@ app.post("/api/add", async (req: Request, res: Response) => {
 
     try {
         let ticket = {
-            id: ++idCounter,
+            _id: ++idCounter,
             room: req.body.room,
             desc: req.body.desc,
             level: req.body.level,
@@ -219,7 +191,7 @@ app.get("/api/get", async (req: Request, res: Response) => {
 app.get("/api/get/:id", (req: Request, res: Response) => {
     try {
         let id: string = req.params.id
-        db.findOne({ id: id }, (err: Error, doc: any) => {
+        db.findOne({ _id: id }, (err: Error, doc: any) => {
             if (doc == null) {
                 res.send("nie znaleziono ticketa")
             }
@@ -263,7 +235,7 @@ app.delete("/api/remove/:id", async (req: Request, res: Response) => {
 
     try {
         let id: string = req.params.id
-        db.remove({ id: id }, (err: Error, docs: number) => {
+        db.remove({ _id: id }, (err: Error, docs: number) => {
             if (docs == 0) {
                 res.send("nie znaleziono ticketa")
             }
@@ -295,14 +267,14 @@ app.patch("/api/archive/:id", async (req: Request, res: Response) => {
 
     try {
         let id: number = parseInt(req.params.id)
-        db.findOne({ id: id }, (err: Error, doc: any) => {
+        db.findOne({ _id: id }, (err: Error, doc: any) => {
             if (doc == null) {
                 res.send("nie znaleziono ticketa")
                 return
             }
             doc.status = "closed"
             archive_db.insert(doc)
-            db.remove({ id: id })
+            db.remove({ _id: id })
             res.send("przeniesiono ticket do archiwum")
         })
     } catch (err) {
@@ -336,45 +308,29 @@ app.post("/user_check", async (req: Request, res: Response) => {
     }
 })
 
-app.get("/make_table", async (req: Request, res: Response) => {
+app.get("/make_table/:year", async (req: Request, res: Response) => {
 
-    if (!verify_request(req)){
-        res.send("verification failed")
-        return
-    }
+    // if (!verify_request(req)){
+    //     res.send("verification failed")
+    //     return
+    // }
 
-    const pythonProcess = spawn('../../venv/Scripts/python.exe', ['./static/excel_script.py']);
-    let responseSent = false;
-
-
-    pythonProcess.stderr.on("data", (data) => {
-        if (!responseSent) {
-            responseSent = true;
-            console.error(`Error from Python script: ${data.toString()}`);
-            res.status(500).send("Coś poszło nie tak");
-        }
-    });
-
-
-    pythonProcess.on("exit", (code) => {
-        if (!responseSent) {
-            responseSent = true;
-            if (code === 0) {
-                res.status(200).send("Proces zakończony sukcesem!");
-            } else {
-                res.status(500).send(`Proces zakończył się z kodem: ${code}`);
-            }
-        }
-    });
+    
+    let year: String = req.params.year
+    console.log(year == "2024-2025" ? "TAK" : "NIE");
+    
+    archive_db.find({date:year}, (err: Error, docs: [any]) => {
+    const workbook = utils.book_new();
+    console.log(docs);
+    
+    const worksheet = utils.json_to_sheet(docs)
+    utils.book_append_sheet(workbook,worksheet, "Archiwum")
+    writeFile(workbook,`archiwum ${year}.xlsx`)
+    res.sendStatus(200)
+    })
 
 
-    pythonProcess.on("error", (err) => {
-        if (!responseSent) {
-            responseSent = true;
-            console.error(`Failed to start subprocess: ${err}`);
-            res.status(500).send(`Błąd uruchamiania subprocessu: ${err.message}`);
-        }
-    });
+
 })
 
 app.listen(port, () => {
