@@ -1,6 +1,7 @@
 <script>
 import { userTokenStore } from "../store/token.js"
 import router from '../router';
+import { sendLogoutRequest } from "../js/logout.js";
 
 export default {
   
@@ -9,12 +10,20 @@ export default {
     }
   },
   methods:{
-    logout() {
-
+    async logout() {
       
-        userTokenStore().clear()
 
-        router.push("/")
+       let boolean_redirect = await sendLogoutRequest()
+       console.log("REDIRECDT: "+boolean_redirect);
+       
+        if (boolean_redirect){
+          alert("RESOLVE")
+          // userTokenStore().clear()
+          // router.push("/")
+        } else {
+          alert("REJECT")
+        }
+
 
     }
   },

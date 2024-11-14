@@ -14,9 +14,9 @@ export default {
               clientId: "4dec3746-1b03-4956-8380-00b68a1d755a",
               authority: "https://login.microsoftonline.com/476832f9-ffac-4834-83a6-fbb4d2cd0960",
           },
-          // cache: {
-          //     cacheLocation: "localStorage"
-          // }
+          cache: {
+              cacheLocation: "localStorage"
+          }
         },
         loginRequest: {
           scopes: ["User.ReadWrite"] // added openid for ID token
@@ -32,6 +32,8 @@ export default {
         await myMsal.initialize()
         let msal_token = await myMsal.loginPopup(this.loginRequest)
 
+
+
         let username = msal_token.account.username
         let load_admin = false     // tylko do testow usunac potem
 
@@ -39,10 +41,17 @@ export default {
 
         // console.log(usernameResponse);
         
+        console.log("TOKEN: \n");
+        
         console.log(msal_token)
 
         const token = userTokenStore()
-        token.change(msal_token.idToken)
+        token.changeToken(msal_token.idToken)
+
+        console.log("ID: "+msal_token.account.homeAccountId);
+        
+
+        token.changeHomeAccountId(msal_token.account.homeAccountId)
 
         console.log(usernameResponse);
 

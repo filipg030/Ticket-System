@@ -3,16 +3,28 @@ import { defineStore } from 'pinia'
 export const userTokenStore = defineStore("token", {
     state: () => {
         return {
-            token: null
+            token: null,
+            homeAccountId: null
         }
     },
     actions: {
-        change(newToken){
+        changeToken(newToken){
             this.token = newToken
+        },
+        changeHomeAccountId(newId){
+            this.homeAccountId = newId
         },
         clear(){
             this.token = null;
+            this.homeAccountId = null;
+        },
+        getHomeAccountId(){
+            return this.homeAccountId
+        },
+        getToken(){
+            return this.token
         }
+
      },
      persist: true,
 })

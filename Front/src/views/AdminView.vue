@@ -64,9 +64,6 @@ export default {
     // console.log(ticketsFromDB);
 
 
-  async mounted() {
-    let ticketsFromDB = await get("http://localhost:3001/api/get")
-    // console.log(ticketsFromDB);
 
     for (let i = 0; i < ticketsFromDB.length; i++) {
       const ticketData = ticketsFromDB[i];
