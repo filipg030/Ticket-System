@@ -1,0 +1,29 @@
+POST http://localhost:3001/user_check HTTP/1.1
+Content-Type: application/json
+
+{"room": 508, "desc": "kabel", "level": "poważne", "status": "zamknięte"}
+
+###
+
+GET http://localhost:3001/test HTTP/1.1 
+Authorization: Bearer 
+
+###
+
+GET http://localhost:3001/api/get_archive HTTP/1.1 
+Authorization: Bearer 
+
+###
+
+GET http://localhost:3001/make_table/2026-2027
+Authorization: Bearer: 
+
+###
+
+DELETE http://localhost:3001/api/remove/2 HTTP/1.1
+Authorization: Bearer: 
+
+###
+
+PATCH http://localhost:3001/api/archive/5
+Authorization: Bearer: 
